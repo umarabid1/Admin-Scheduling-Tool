@@ -11,6 +11,6 @@ Bugs
 Fix Input Validation Issues: Ensure that empty faculty or course names cannot be submitted. 
 Improve Dropdown Functionality: Ensure that new entries appear in the dropdown menus dynamically.
 
-Technical 
+Technical Debt
 Refactor the UI Code: Improve code organization by separating logic into different classes or modules. 
 Add Unit Tests: Create tests for functionality to ensure reliability during future changes.
