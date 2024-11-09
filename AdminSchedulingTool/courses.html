@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Management</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <h2>Course Management</h2>
+    <table id="courseTable">
+        <thead>
+            <tr>
+                <th>Course Code</th>
+                <th>Course Number</th>
+                <th>Course Name</th>
+                <th>Discipline</th>
+                <th>Year</th>
+                <th>Anticipated Enrollment</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+    <h3>Add/Edit Course</h3>
+    <form id="courseForm">
+        <input type="text" id="courseCode" placeholder="Course Code" required>
+        <input type="number" id="courseNumber" placeholder="Course Number" required>
+        <input type="text" id="courseName" placeholder="Course Name" required>
+        <input type="text" id="discipline" placeholder="Discipline" required>
+        <select id="year">
+            <option value="FR">Freshman</option>
+            <option value="SO">Sophomore</option>
+            <option value="JR">Junior</option>
+            <option value="SR">Senior</option>
+            <option value="GR">Graduate</option>
+        </select>
+        <input type="number" id="anticipatedEnrollment" placeholder="Anticipated Enrollment" required>
+        <button type="submit">Save</button>
+    </form>
+    <script src="js/app.js"></script>
+</body>
+</html>

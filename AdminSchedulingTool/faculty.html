@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Management</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <h2>Faculty Management</h2>
+    <table id="facultyTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Email</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+    <h3>Add/Edit Faculty</h3>
+    <form id="facultyForm">
+        <input type="text" id="name" placeholder="Name" required>
+        <!-- Changed Type from select dropdown to a text input -->
+        <input type="text" id="type" placeholder="Type" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <textarea id="notes" placeholder="Notes"></textarea>
+        <button type="submit">Save</button>
+    </form>
+    <script src="js/app.js"></script>
+</body>
+</html>
+
