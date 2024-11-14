@@ -2,17 +2,6 @@
 qualified faculty based on availability and expertise.
 
 User Stories
-#Tasks
-Create a UI for adding and listing faculty members. Add data validation for faculty names. 
-Implement Course Management Functionality: Create a UI for adding and listing courses. Add data validation for course names.
-Implement Scheduling Functionality: Allow assignment of courses to selected faculty. Store and display assigned courses.
-
-As an administrator, I want to add faculty members to manage course assignments.
-Acceptance Criteria: The system allows input of faculty names.Faculty names are displayed in a list.
-#Bugs
-Fix Input Validation Issues: Ensure that empty faculty or course names cannot be submitted. 
-Improve Dropdown Functionality: Ensure that new entries appear in the dropdown menus dynamically.
-
 As an administrator, I want to add course offerings to manage what is available for scheduling.
 Acceptance Criteria: The system allows input of course names. Course names are displayed in a list.
 As an administrator, I want to assign courses to faculty members to automate scheduling.
@@ -24,6 +13,6 @@ Bugs Fix Input Validation Issues: Ensure that empty faculty or course names cann
 Technical Debt
 Refactor the UI Code: Improve code organization by separating logic into different classes or modules. Add Unit Tests: Create tests for functionality to ensure reliability during future changes.
 
-#Technical Debt
-Refactor the UI Code: Improve code organization by separating logic into different classes or modules. 
-Add Unit Tests: Create tests for functionality to ensure reliability during future changes.
+Bugs
+Fix Input Validation Issues: Ensure that empty faculty or course names cannot be submitted. 
+Improve Dropdown Functionality: Ensure that new entries appear in the dropdown menus dynamically.
