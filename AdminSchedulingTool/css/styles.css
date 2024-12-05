@@ -8,10 +8,22 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: #ECF0F1;
     color: #333;
-    line-height: 1.6;
+    padding: 20px;
 }
 
-/* Hero Section with 3D Features */
+/* Reusable 3D Styles */
+.three-d {
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.three-d:hover {
+    transform: translateY(-5px);
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.2), -8px -8px 20px rgba(255, 255, 255, 0.9);
+}
+
+/* Hero Section */
 .hero-section {
     background: linear-gradient(to right, #34495e, #2c3e50);
     color: white;
@@ -31,34 +43,36 @@ body {
     margin-top: 10px;
 }
 
-/* Navigation Bar with Hover Effects */
-.top-nav {
-    background: #2c3e50;
-    padding: 15px 0;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-}
-.top-nav ul {
-    display: flex;
-    justify-content: center;
+/* Navigation Bar */
+nav ul {
     list-style: none;
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    justify-content: space-between;
 }
-.top-nav ul li {
-    margin: 0 15px;
+nav ul li {
+    flex-grow: 1;
+    text-align: center;
 }
-.top-nav ul li a {
-    color: white;
+nav ul li a {
+    color: #2c3e50;
     text-decoration: none;
     font-weight: bold;
-    padding: 12px 20px;
-    border-radius: 8px;
-    transition: transform 0.3s, background 0.3s;
+    padding: 8px 12px;
+    transition: background-color 0.3s, transform 0.3s;
 }
-.top-nav ul li a:hover {
-    background: linear-gradient(to right, #18bc9c, #2ecc71);
-    transform: translateY(-3px);
+nav ul li a:hover {
+    background-color: #18BC9C;
+    color: white;
+    border-radius: 3px;
+    transform: scale(1.1);
 }
 
-/* Main Content with 3D Cards */
+/* Grid-based Content */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -102,103 +116,24 @@ body {
     transform: scale(1.1);
 }
 
-/* Footer with Enhanced Styling */
-.footer {
-    background: linear-gradient(90deg, #34495e, #2c3e50);
-    color: white;
-    text-align: center;
-    padding: 20px;
-    margin-top: 40px;
-    box-shadow: 0px -4px 6px rgba(0, 0, 0, 0.1);
-}
-.footer nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    padding: 10px 0;
-}
-.footer nav ul li {
-    margin: 0 15px;
-}
-.footer nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 0.9em;
-    transition: color 0.3s, transform 0.3s;
-}
-.footer nav ul li a:hover {
-    color: #18bc9c;
-    transform: scale(1.1);
-}
-
-
-/* General Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #ECF0F1;
-    color: #333;
-    padding: 20px;
-}
-
-/* Headings */
-h2 {
-    color: #2C3E50;
-    margin-bottom: 15px;
-    font-size: 1.8em;
-}
-h3 {
-    color: #333;
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-
-/* Navigation Bar */
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 20px;
-    padding: 10px;
-    background-color: #2C3E50;
-    border-radius: 5px;
-    justify-content: space-between;
-}
-nav ul li {
-    flex-grow: 1;
-    text-align: center;
-}
-nav ul li a {
-    color: #ECF0F1;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 8px 12px;
-    transition: background-color 0.3s;
-}
-nav ul li a:hover {
-    background-color: #18BC9C;
-    color: #fff;
-    border-radius: 3px;
-}
-
 /* Forms */
 form {
-    margin-top: 20px;
-    background-color: #fff;
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+form:hover {
+    transform: translateY(-5px);
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.2), -8px -8px 20px rgba(255, 255, 255, 0.9);
 }
 input, select, textarea, button {
-    width: 100%;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1), inset -2px -2px 5px rgba(255, 255, 255, 0.7);
+    border: none;
     padding: 10px;
-    margin-top: 10px;
     border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 1em;
+    margin-top: 10px;
     transition: all 0.3s ease;
 }
 input:focus, select:focus, textarea:focus {
@@ -226,10 +161,15 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: #fff;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.8);
     border-radius: 5px;
     overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+table:hover {
+    transform: translateY(-5px);
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.2), -8px -8px 20px rgba(255, 255, 255, 0.9);
 }
 th, td {
     padding: 12px;
@@ -247,30 +187,165 @@ tr:hover {
     background-color: #e3f2fd;
 }
 
-/* Timetable */
-#timetableContainer {
-    margin-top: 20px;
-    overflow-x: auto;
-}
-#timetable th {
-    background-color: #2C3E50;
+/* Footer Styling */
+.footer {
+    background: linear-gradient(90deg, #34495e, #2c3e50);
     color: white;
+    text-align: center;
+    padding: 20px 10px;
+    margin-top: 40px;
+    box-shadow: 0px -4px 6px rgba(0, 0, 0, 0.1);
 }
-#timetable td {
-    background-color: #ECF0F1;
+
+/* Footer Text */
+.footer p {
+    margin: 10px 0;
+    font-size: 0.9em;
 }
-#timetable td[rowspan] {
-    background-color: #18BC9C;
+
+/* Footer Navigation */
+.footer nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 0;
+    margin: 10px 0 0 0;
+}
+.footer nav ul li a {
     color: white;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: color 0.3s, transform 0.3s;
+}
+.footer nav ul li a:hover {
+    color: #18bc9c;
+    transform: scale(1.1);
+}
+
+/* Footer Bottom Spacing */
+body {
+    padding-bottom: 60px; /* Ensures content doesn't overlap footer */
+}
+.footer {
+    position: relative;
+}
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Timetable styling */
+.timetable {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header, .row {
+    display: grid;
+    grid-template-columns: 100px repeat(7, 1fr);
+}
+
+.cell {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+/* Header alignment and styling */
+.header .cell {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Add subtle borders to the rows */
+.row {
+    display: grid;
+    grid-template-columns: 100px repeat(7, 1fr); /* Adjust for 7 days */
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.cell {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+/* Highlight Time Column */
+.cell:first-child {
+    background-color: #f1f1f1;
     font-weight: bold;
 }
 
-/* Responsive Enhancements */
-@media (max-width: 768px) {
-    nav ul {
-        flex-direction: column;
+/* Event Styling */
+.event {
+    background-color: #f39c12;
+    color: #fff;
+    border-radius: 4px;
+    padding: 5px 10px;
+    text-align: center;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.event:hover {
+    transform: scale(1.05);
+    background-color: #e67e22;
+}
+
+
+/* Button styling */
+#showTimetableButton {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#showTimetableButton:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cell:hover {
+    background-color: #f4f4f4;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .header, .row {
+        grid-template-columns: 70px repeat(7, 1fr); /* Shrink columns */
     }
-    table, form {
-        font-size: 0.9em;
+
+    .cell {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    #showTimetableButton {
+        width: 100%;
+        font-size: 14px;
     }
 }
