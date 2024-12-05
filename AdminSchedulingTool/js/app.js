@@ -1,316 +1,216 @@
-// Helper function to save data to Local Storage
+// Helper functions for LocalStorage
 function saveToLocalStorage(key, data) {
     localStorage.setItem(key, JSON.stringify(data));
 }
 
-// Helper function to load data from Local Storage
 function loadFromLocalStorage(key) {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : [];
+    return JSON.parse(localStorage.getItem(key) || "[]");
 }
 
-// Faculty Management
-let editingFacultyIndex = null;
+// Initialize Forms and Tables
+document.addEventListener("DOMContentLoaded", function () {
+    const forms = [
+        { formId: "facultyForm", tableId: "facultyTable", storageKey: "facultyData" },
+        { formId: "courseForm", tableId: "courseTable", storageKey: "courseData" },
+        { formId: "sectionForm", tableId: "sectionTable", storageKey: "sectionData" }
+    ];
 
-document.addEventListener("DOMContentLoaded", function() {
-    if (document.getElementById("facultyTable")) {
-        loadFacultyTable(); // Load faculty data on page load
-    }
+    forms.forEach(({ formId, tableId, storageKey }) => {
+        const form = document.getElementById(formId);
+        const table = document.getElementById(tableId);
+        if (form && table) {
+            setupForm(form, table, storageKey);
+        }
+    });
+
+    // Timetable toggle logic
+    const showTimetableButton = document.getElementById("showTimetableButton");
+    const timetableContainer = document.getElementById("timetableContainer");
+
+    showTimetableButton.addEventListener("click", () => {
+        if (timetableContainer.classList.contains("hidden")) {
+            timetableContainer.classList.remove("hidden");
+            populateTimetable(); // Populate the timetable only when showing
+            showTimetableButton.textContent = "Hide Timetable";
+        } else {
+            timetableContainer.classList.add("hidden");
+            showTimetableButton.textContent = "Show Timetable";
+        }
+    });
 });
 
-document.getElementById("facultyForm")?.addEventListener("submit", function(event) {
-    event.preventDefault();
+// Function to Set Up a Form and Associated Table
+function setupForm(form, table, storageKey) {
+    const customFieldsContainer = form.querySelector("#customFieldsContainer");
+    const addFieldButton = form.querySelector("#addFieldButton");
+    let editingIndex = null;
 
-    const name = document.getElementById("name").value;
-    const type = document.getElementById("type").value; // Now accepts free-text input
-    const email = document.getElementById("email").value;
-    const notes = document.getElementById("notes").value;
+    // Add Custom Field
+    if (addFieldButton) {
+        addFieldButton.addEventListener("click", function () {
+            const fieldId = `customField_${Date.now()}`;
+            const fieldDiv = document.createElement("div");
+            fieldDiv.classList.add("custom-field");
+            fieldDiv.innerHTML = `
+                <input type="text" id="${fieldId}_name" placeholder="Field Name" required>
+                <input type="text" id="${fieldId}_value" placeholder="Field Value" required>
+                <button type="button" class="remove-field-button">Remove</button>
+            `;
+            customFieldsContainer.appendChild(fieldDiv);
 
-    let facultyData = loadFromLocalStorage("facultyData");
-
-    if (editingFacultyIndex !== null) {
-        // Update existing entry
-        facultyData[editingFacultyIndex] = { name, type, email, notes };
-        editingFacultyIndex = null; // Reset editing mode
-    } else {
-        // Add new entry
-        const newFaculty = { name, type, email, notes };
-        facultyData.push(newFaculty);
+            // Attach remove functionality
+            const removeButton = fieldDiv.querySelector(".remove-field-button");
+            removeButton.addEventListener("click", function () {
+                fieldDiv.remove();
+            });
+        });
     }
 
-    saveToLocalStorage("facultyData", facultyData);
-    loadFacultyTable(); // Reload the table to reflect changes
-    document.getElementById("facultyForm").reset();
-});
+    // Submit Form
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-function loadFacultyTable() {
-    const tableBody = document.getElementById("facultyTable").getElementsByTagName("tbody")[0];
-    tableBody.innerHTML = ""; // Clear existing rows
-    const facultyData = loadFromLocalStorage("facultyData");
-    facultyData.forEach((faculty, index) => addFacultyToTable(faculty, index));
+        // Collect Standard Fields
+        const formData = {};
+        Array.from(form.elements).forEach(input => {
+            if (input.id && !input.classList.contains("custom-field")) {
+                formData[input.id] = input.value;
+            }
+        });
+
+        // Collect Custom Fields
+        formData.customFields = [];
+        const customFields = form.querySelectorAll(".custom-field");
+        customFields.forEach(field => {
+            const fieldName = field.querySelector("input:nth-child(1)").value;
+            const fieldValue = field.querySelector("input:nth-child(2)").value;
+            formData.customFields.push({ name: fieldName, value: fieldValue });
+        });
+
+        // Save Data
+        let data = loadFromLocalStorage(storageKey);
+        if (editingIndex !== null) {
+            data[editingIndex] = formData; // Update existing entry
+            editingIndex = null; // Reset editing index
+        } else {
+            data.push(formData); // Add new entry
+        }
+        saveToLocalStorage(storageKey, data);
+
+        // Reload Table and Reset Form
+        loadTable(table, data);
+        form.reset();
+        if (customFieldsContainer) customFieldsContainer.innerHTML = ""; // Clear custom fields
+    });
+
+    // Load Table Data
+    const data = loadFromLocalStorage(storageKey);
+    loadTable(table, data);
+
+    // Edit and Delete Row Handlers
+    table.addEventListener("click", function (event) {
+        const target = event.target;
+        const rowIndex = target.getAttribute("data-index");
+
+        if (target.classList.contains("edit-button")) {
+            // Edit Row
+            editingIndex = parseInt(rowIndex, 10);
+            const rowData = loadFromLocalStorage(storageKey)[editingIndex];
+            populateForm(form, rowData, customFieldsContainer);
+        } else if (target.classList.contains("delete-button")) {
+            // Delete Row
+            let data = loadFromLocalStorage(storageKey);
+            data.splice(rowIndex, 1); // Remove the item at the specified index
+            saveToLocalStorage(storageKey, data);
+            loadTable(table, data);
+        }
+    });
 }
 
-function addFacultyToTable(faculty, index) {
-    const table = document.getElementById("facultyTable").getElementsByTagName("tbody")[0];
-    const newRow = table.insertRow();
+// Populate Form with Existing Data for Editing
+function populateForm(form, data, customFieldsContainer) {
+    Object.entries(data).forEach(([key, value]) => {
+        const input = form.querySelector(`#${key}`);
+        if (input) {
+            input.value = value;
+        }
+    });
 
-    newRow.innerHTML = `
-        <td>${faculty.name}</td>
-        <td>${faculty.type}</td>
-        <td>${faculty.email}</td>
-        <td>${faculty.notes}</td>
-        <td>
-            <button onclick="editFaculty(${index})">Edit</button>
-            <button onclick="deleteFacultyRow(${index})">Delete</button>
-        </td>
-    `;
-}
+    if (customFieldsContainer && data.customFields) {
+        customFieldsContainer.innerHTML = data.customFields.map(field => `
+            <div class="custom-field">
+                <input type="text" value="${field.name}" placeholder="Field Name" required>
+                <input type="text" value="${field.value}" placeholder="Field Value" required>
+                <button type="button" class="remove-field-button">Remove</button>
+            </div>
+        `).join("");
 
-function editFaculty(index) {
-    const facultyData = loadFromLocalStorage("facultyData");
-    const faculty = facultyData[index];
-
-    document.getElementById("name").value = faculty.name;
-    document.getElementById("type").value = faculty.type;
-    document.getElementById("email").value = faculty.email;
-    document.getElementById("notes").value = faculty.notes;
-
-    editingFacultyIndex = index; // Set editing mode with index
-}
-
-function deleteFacultyRow(index) {
-    let facultyData = loadFromLocalStorage("facultyData");
-    facultyData.splice(index, 1); // Remove entry at index
-    saveToLocalStorage("facultyData", facultyData);
-    loadFacultyTable(); // Reload the table to reflect deletion
-}
-
-
-// Course Management
-let editingCourseIndex = null;
-
-document.getElementById("courseForm")?.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const courseCode = document.getElementById("courseCode").value;
-    const courseNumber = document.getElementById("courseNumber").value;
-    const courseName = document.getElementById("courseName").value;
-    const discipline = document.getElementById("discipline").value;
-    const year = document.getElementById("year").value;
-    const anticipatedEnrollment = document.getElementById("anticipatedEnrollment").value;
-
-    let courseData = loadFromLocalStorage("courseData");
-
-    if (editingCourseIndex !== null) {
-        courseData[editingCourseIndex] = { courseCode, courseNumber, courseName, discipline, year, anticipatedEnrollment };
-        editingCourseIndex = null;
-    } else {
-        const newCourse = { courseCode, courseNumber, courseName, discipline, year, anticipatedEnrollment };
-        courseData.push(newCourse);
+        customFieldsContainer.querySelectorAll(".remove-field-button").forEach(button => {
+            button.addEventListener("click", () => button.parentElement.remove());
+        });
     }
-
-    saveToLocalStorage("courseData", courseData);
-    loadCourseTable();
-    document.getElementById("courseForm").reset();
-});
-
-function loadCourseTable() {
-    const tableBody = document.getElementById("courseTable").getElementsByTagName("tbody")[0];
-    tableBody.innerHTML = ""; // Clear existing rows
-    const courseData = loadFromLocalStorage("courseData");
-    courseData.forEach((course, index) => addCourseToTable(course, index));
 }
 
-function addCourseToTable(course, index) {
-    const table = document.getElementById("courseTable").getElementsByTagName("tbody")[0];
-    const newRow = table.insertRow();
-
-    newRow.innerHTML = `
-        <td>${course.courseCode}</td>
-        <td>${course.courseNumber}</td>
-        <td>${course.courseName}</td>
-        <td>${course.discipline}</td>
-        <td>${course.year}</td>
-        <td>${course.anticipatedEnrollment}</td>
-        <td>
-            <button onclick="editCourse(${index})">Edit</button>
-            <button onclick="deleteCourseRow(${index})">Delete</button>
-        </td>
-    `;
+// Load Data into the Table
+function loadTable(table, data) {
+    const tbody = table.querySelector("tbody");
+    tbody.innerHTML = data.map((item, index) => `
+        <tr>
+            ${Object.entries(item).map(([key, value]) => {
+                if (key === "customFields") {
+                    return `<td>${value.map(field => `${field.name}: ${field.value}`).join("<br>")}</td>`;
+                } else {
+                    return `<td>${value}</td>`;
+                }
+            }).join("")}
+            <td>
+                <button class="edit-button" data-index="${index}">Edit</button>
+                <button class="delete-button" data-index="${index}">Delete</button>
+            </td>
+        </tr>
+    `).join("");
 }
 
-function editCourse(index) {
-    const courseData = loadFromLocalStorage("courseData");
-    const course = courseData[index];
+// Populate Timetable with Section Data
+function populateTimetable() {
+    const timetableBody = document.querySelector(".timetable .body");
+    const timeSlots = [
+        "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
+        "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"
+    ];
 
-    document.getElementById("courseCode").value = course.courseCode;
-    document.getElementById("courseNumber").value = course.courseNumber;
-    document.getElementById("courseName").value = course.courseName;
-    document.getElementById("discipline").value = course.discipline;
-    document.getElementById("year").value = course.year;
-    document.getElementById("anticipatedEnrollment").value = course.anticipatedEnrollment;
+    timetableBody.innerHTML = ""; // Clear previous rows
 
-    editingCourseIndex = index;
-}
-
-function deleteCourseRow(index) {
-    let courseData = loadFromLocalStorage("courseData");
-    courseData.splice(index, 1);
-    saveToLocalStorage("courseData", courseData);
-    loadCourseTable();
-}
-
-// Section Scheduling
-let editingSectionIndex = null;
-
-document.getElementById("sectionForm")?.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const courseName = document.getElementById("courseName").value;
-    const courseCode = document.getElementById("courseCode").value;
-    const sectionNumber = document.getElementById("sectionNumber").value;
-    const facultyName = document.getElementById("facultyName").value;
-    const room = document.getElementById("room").value;
-    const days = document.getElementById("days").value;
-    const type = document.getElementById("type").value;
-    const startTime = document.getElementById("startTime").value;
-    const endTime = document.getElementById("endTime").value;
-    const anticipatedEnrollment = document.getElementById("anticipatedEnrollment").value;
-
-    let sectionData = loadFromLocalStorage("sectionData");
-
-    if (editingSectionIndex !== null) {
-        sectionData[editingSectionIndex] = { courseName, courseCode, sectionNumber, facultyName, room, days, type, startTime, endTime, anticipatedEnrollment };
-        editingSectionIndex = null;
-    } else {
-        const newSection = { courseName, courseCode, sectionNumber, facultyName, room, days, type, startTime, endTime, anticipatedEnrollment };
-        sectionData.push(newSection);
-    }
-
-    saveToLocalStorage("sectionData", sectionData);
-    loadSectionTable();
-    document.getElementById("sectionForm").reset();
-});
-
-function loadSectionTable() {
-    const tableBody = document.getElementById("sectionTable").getElementsByTagName("tbody")[0];
-    tableBody.innerHTML = ""; // Clear existing rows
-    const sectionData = loadFromLocalStorage("sectionData");
-    sectionData.forEach((section, index) => addSectionToTable(section, index));
-}
-
-function addSectionToTable(section, index) {
-    const table = document.getElementById("sectionTable").getElementsByTagName("tbody")[0];
-    const newRow = table.insertRow();
-
-    newRow.innerHTML = `
-        <td>${section.courseName}</td>
-        <td>${section.courseCode}</td>
-        <td>${section.sectionNumber}</td>
-        <td>${section.facultyName}</td>
-        <td>${section.room}</td>
-        <td>${section.days}</td>
-        <td>${section.type}</td>
-        <td>${section.startTime}</td>
-        <td>${section.endTime}</td>
-        <td>${section.anticipatedEnrollment}</td>
-        <td>
-            <button onclick="editSection(${index})">Edit</button>
-            <button onclick="deleteSectionRow(${index})">Delete</button>
-        </td>
-    `;
-}
-
-function editSection(index) {
-    const sectionData = loadFromLocalStorage("sectionData");
-    const section = sectionData[index];
-
-    document.getElementById("courseName").value = section.courseName;
-    document.getElementById("courseCode").value = section.courseCode;
-    document.getElementById("sectionNumber").value = section.sectionNumber;
-    document.getElementById("facultyName").value = section.facultyName;
-    document.getElementById("room").value = section.room;
-    document.getElementById("days").value = section.days;
-    document.getElementById("type").value = section.type;
-    document.getElementById("startTime").value = section.startTime;
-    document.getElementById("endTime").value = section.endTime;
-    document.getElementById("anticipatedEnrollment").value = section.anticipatedEnrollment;
-
-    editingSectionIndex = index; // Set editing mode with index
-}
-
-function deleteSectionRow(index) {
-    let sectionData = loadFromLocalStorage("sectionData");
-    sectionData.splice(index, 1); // Remove entry at index
-    saveToLocalStorage("sectionData", sectionData);
-    loadSectionTable(); // Reload the table to reflect deletion
-}
-
-// Timetable Visualization
-const timeSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
-
-document.addEventListener("DOMContentLoaded", function() {
-    if (document.getElementById("facultyTable")) {
-        loadFacultyTable();
-    }
-    if (document.getElementById("courseTable")) {
-        loadCourseTable();
-    }
-    if (document.getElementById("sectionTable")) {
-        loadSectionTable();
-    }
-    if (document.querySelector("#timetable")) {
-        generateTimetable();
-    }
-});
-
-function generateTimetable() {
-    const timetableBody = document.querySelector("#timetable tbody");
-    const sectionData = loadFromLocalStorage("sectionData");
-
-    // Create rows for each time slot
     timeSlots.forEach((time) => {
-        const row = document.createElement("tr");
-        const timeCell = document.createElement("td");
+        const row = document.createElement("div");
+        row.classList.add("row");
+
+        const timeCell = document.createElement("div");
+        timeCell.classList.add("cell");
         timeCell.textContent = time;
         row.appendChild(timeCell);
 
-        // Add empty cells for each day of the week
-        ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].forEach((day) => {
-            const cell = document.createElement("td");
-            cell.setAttribute("data-time", time);
-            cell.setAttribute("data-day", day);
-            row.appendChild(cell);
+        ["S", "M", "T", "W", "R", "F", "S"].forEach((day) => {
+            const dayCell = document.createElement("div");
+            dayCell.classList.add("cell");
+
+            const sectionData = loadFromLocalStorage("sectionData").find(section => {
+                return section.days.includes(day) && section.startTime === time;
+            });
+
+            if (sectionData) {
+                dayCell.textContent = `${sectionData.courseName} (${sectionData.room})`;
+                dayCell.classList.add("event");
+            } else {
+                dayCell.textContent = "-"; // Placeholder for empty slots
+                dayCell.style.color = "#ccc"; // Lighten placeholder text
+            }
+
+            row.appendChild(dayCell);
         });
 
         timetableBody.appendChild(row);
     });
-
-    // Populate the timetable with section data
-    sectionData.forEach((section) => {
-        const { courseName, days, startTime, endTime, room } = section;
-        const startRow = timeSlots.indexOf(startTime);
-        const endRow = timeSlots.indexOf(endTime);
-
-        days.split(",").forEach(day => {
-            if (startRow !== -1 && endRow !== -1) {
-                const row = timetableBody.children[startRow];
-                const cell = row.querySelector(`[data-day="${day.trim()}"]`);
-                if (cell) {
-                    cell.textContent = `${courseName}\n${room}`;
-                    cell.setAttribute("rowspan", endRow - startRow + 1);
-                    cell.style.backgroundColor = "#18BC9C";
-                    cell.style.color = "white";
-                    cell.style.fontWeight = "bold";
-
-                    // Remove overlapping cells to create a merged cell effect
-                    for (let i = startRow + 1; i <= endRow; i++) {
-                        const overlappingCell = timetableBody.children[i].querySelector(`[data-day="${day.trim()}"]`);
-                        if (overlappingCell) overlappingCell.remove();
-                    }
-                }
-            }
-        });
-    });
+}
 }
 
