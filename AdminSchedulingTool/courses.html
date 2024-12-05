@@ -17,6 +17,7 @@
                 <th>Discipline</th>
                 <th>Year</th>
                 <th>Anticipated Enrollment</th>
+                <th>Custom Fields</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -38,6 +39,8 @@
             <option value="GR">Graduate</option>
         </select>
         <input type="number" id="anticipatedEnrollment" placeholder="Anticipated Enrollment" required>
+        <div id="customFieldsContainer"></div>
+        <button type="button" id="addFieldButton">Add Custom Field</button>
         <button type="submit">Save</button>
     </form>
     <script src="js/app.js"></script>
