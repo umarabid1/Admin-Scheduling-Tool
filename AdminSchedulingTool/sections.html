@@ -21,6 +21,7 @@
                 <th>Start Time</th>
                 <th>End Time</th>
                 <th>Anticipated Enrollment</th>
+                <th>Custom Fields</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -44,8 +45,31 @@
         <input type="time" id="startTime" required>
         <input type="time" id="endTime" required>
         <input type="number" id="anticipatedEnrollment" placeholder="Anticipated Enrollment" required>
+        <div id="customFieldsContainer"></div>
+        <button type="button" id="addFieldButton">Add Custom Field</button>
         <button type="submit">Save</button>
     </form>
+
+    <h2>Timetable</h2>
+    <button id="showTimetableButton">Show Timetable</button>
+    <div id="timetableContainer" class="hidden">
+        <div class="timetable">
+            <div class="header">
+                <div class="cell">Time</div>
+                <div class="cell">Sunday</div>
+                <div class="cell">Monday</div>
+                <div class="cell">Tuesday</div>
+                <div class="cell">Wednesday</div>
+                <div class="cell">Thursday</div>
+                <div class="cell">Friday</div>
+                <div class="cell">Saturday</div>
+            </div>
+            <div class="body">
+                <!-- Timetable rows will be generated dynamically -->
+            </div>
+        </div>
+    </div>
+
     <script src="js/app.js"></script>
 </body>
 </html>
