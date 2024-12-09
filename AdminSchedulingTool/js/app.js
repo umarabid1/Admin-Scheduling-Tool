@@ -27,18 +27,47 @@ document.addEventListener("DOMContentLoaded", function () {
     const showTimetableButton = document.getElementById("showTimetableButton");
     const timetableContainer = document.getElementById("timetableContainer");
 
-    showTimetableButton.addEventListener("click", () => {
-        if (timetableContainer.classList.contains("hidden")) {
-            timetableContainer.classList.remove("hidden");
-            populateTimetable(); // Populate the timetable only when showing
-            showTimetableButton.textContent = "Hide Timetable";
-        } else {
-            timetableContainer.classList.add("hidden");
-            showTimetableButton.textContent = "Show Timetable";
-        }
-    });
+    if (showTimetableButton && timetableContainer) {
+        showTimetableButton.addEventListener("click", () => {
+            if (timetableContainer.classList.contains("hidden")) {
+                timetableContainer.classList.remove("hidden");
+                populateTimetable(); // Populate the timetable only when showing
+                showTimetableButton.textContent = "Hide Timetable";
+            } else {
+                timetableContainer.classList.add("hidden");
+                showTimetableButton.textContent = "Show Timetable";
+            }
+        });
+    }
 });
+// Dynamically generate time options
+function populateTimeDropdown(selectElement) {
+    const times = [];
+    const startHour = 6; // Start at 8:00 AM
+    const endHour = 23; // End at 8:00 PM
 
+    for (let hour = startHour; hour <= endHour; hour++) {
+        const ampm = hour < 12 ? "AM" : "PM";
+        const adjustedHour = hour % 12 || 12; // Convert 24-hour time to 12-hour time
+        times.push(`${adjustedHour}:00 ${ampm}`);
+        times.push(`${adjustedHour}:15 ${ampm}`);
+        times.push(`${adjustedHour}:30 ${ampm}`);
+        times.push(`${adjustedHour}:45 ${ampm}`);
+    }
+
+    times.forEach(time => {
+        const option = document.createElement("option");
+        option.value = time;
+        option.textContent = time;
+        selectElement.appendChild(option);
+    });
+}
+
+// Call the function to populate the dropdowns on page load
+document.addEventListener("DOMContentLoaded", function () {
+    populateTimeDropdown(document.getElementById("startTime"));
+    populateTimeDropdown(document.getElementById("endTime"));
+});
 // Function to Set Up a Form and Associated Table
 function setupForm(form, table, storageKey) {
     const customFieldsContainer = form.querySelector("#customFieldsContainer");
@@ -171,6 +200,35 @@ function loadTable(table, data) {
     `).join("");
 }
 
+// Filter/Search Function for Tables
+function filterTable(tableId, searchValue) {
+    const input = searchValue.toLowerCase(); // Convert input to lowercase for case-insensitive search
+    const table = document.getElementById(tableId);
+    if (!table) return; // If table is not found, exit
+    const rows = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        let rowMatches = false;
+
+        for (let j = 0; j < cells.length; j++) {
+            const cellText = cells[j].textContent.toLowerCase();
+            if (cellText.includes(input)) {
+                rowMatches = true;
+                break;
+            }
+        }
+
+        rows[i].style.display = rowMatches ? "" : "none"; // Show or hide the row
+    }
+}
+
+// Toggle the Hamburger Menu
+function toggleMenu() {
+    const menu = document.getElementById('menu');
+    menu.classList.toggle('active');
+}
+
 // Populate Timetable with Section Data
 function populateTimetable() {
     const timetableBody = document.querySelector(".timetable .body");
@@ -212,5 +270,139 @@ function populateTimetable() {
         timetableBody.appendChild(row);
     });
 }
+
+// Helper functions for LocalStorage
+function saveToLocalStorage(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+}
+
+function loadFromLocalStorage(key) {
+    return JSON.parse(localStorage.getItem(key) || "[]");
+}
+
+// Add a course to the timetable
+function addCourse() {
+    const courseNumber = document.getElementById('courseInput').value.trim();
+    const day = document.getElementById('daySelect').value;
+    const startTime = document.getElementById('startTimeSelect').value;
+    const endTime = document.getElementById('endTimeSelect').value;
+
+    if (!courseNumber || !day || !startTime || !endTime) {
+        alert('Please fill in all fields.');
+        return;
+    }
+
+    const startIndex = timeToIndex(startTime);
+    const endIndex = timeToIndex(endTime);
+
+    if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
+        alert('Invalid time selection.');
+        return;
+    }
+
+    // Check if time slot is occupied
+    for (let i = startIndex; i < endIndex; i++) {
+        const cellId = `${day}-${["8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm"][i]}`;
+        const cell = document.getElementById(cellId);
+        if (cell && cell.innerHTML) {
+            alert('This time slot is already occupied!');
+            return;
+        }
+    }
+
+    // Save to localStorage
+    const courses = loadFromLocalStorage('timetableCourses');
+    courses.push({ courseNumber, day, startTime, endTime });
+    saveToLocalStorage('timetableCourses', courses);
+
+    // Update timetable visually
+    for (let i = startIndex; i < endIndex; i++) {
+        const cellId = `${day}-${["8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm"][i]}`;
+        const cell = document.getElementById(cellId);
+        if (cell) {
+            cell.innerHTML = `
+                <div class="event">
+                    ${courseNumber}
+                    <button onclick="deleteCourse('${day}', '${startTime}', '${endTime}', '${courseNumber}')">Delete</button>
+                </div>
+            `;
+        }
+    }
+
+    // Clear input fields
+    document.getElementById('courseInput').value = '';
+    document.getElementById('daySelect').value = '';
+    document.getElementById('startTimeSelect').value = '';
+    document.getElementById('endTimeSelect').value = '';
+}
+
+// Populate timetable on load
+function populateTimetable() {
+    const courses = loadFromLocalStorage('timetableCourses');
+    courses.forEach(course => {
+        const { courseNumber, day, startTime, endTime } = course;
+        const startIndex = timeToIndex(startTime);
+        const endIndex = timeToIndex(endTime);
+
+        for (let i = startIndex; i < endIndex; i++) {
+            const cellId = `${day}-${["8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm"][i]}`;
+            const cell = document.getElementById(cellId);
+            if (cell) {
+                cell.innerHTML = `
+                    <div class="event">
+                        ${courseNumber}
+                        <button onclick="deleteCourse('${day}', '${startTime}', '${endTime}', '${courseNumber}')">Delete</button>
+                    </div>
+                `;
+            }
+        }
+    });
+}
+
+// Delete a single course
+function deleteCourse(day, startTime, endTime, courseNumber) {
+    if (confirm(`Are you sure you want to delete the course "${courseNumber}"?`)) {
+        // Load current courses from localStorage
+        let courses = loadFromLocalStorage('timetableCourses');
+
+        // Filter out the course to delete
+        courses = courses.filter(course => 
+            !(course.day === day && course.startTime === startTime && course.endTime === endTime && course.courseNumber === courseNumber)
+        );
+
+        // Save updated courses to localStorage
+        saveToLocalStorage('timetableCourses', courses);
+
+        // Clear the course from the timetable
+        const startIndex = timeToIndex(startTime);
+        const endIndex = timeToIndex(endTime);
+
+        for (let i = startIndex; i < endIndex; i++) {
+            const cellId = `${day}-${["8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm"][i]}`;
+            const cell = document.getElementById(cellId);
+            if (cell && cell.innerHTML.includes(courseNumber)) {
+                cell.innerHTML = ''; // Clear the cell content
+            }
+        }
+
+        alert(`Course "${courseNumber}" has been deleted.`);
+    }
+}
+
+// Helper to convert time to index
+function timeToIndex(time) {
+    const times = ["8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm"];
+    return times.indexOf(time);
+}
+
+// Initialize timetable on page load
+document.addEventListener('DOMContentLoaded', populateTimetable);
+// Delete all courses
+function deleteAllCourses() {
+    if (confirm('Are you sure you want to delete all courses?')) {
+        localStorage.removeItem('timetableCourses');
+        document.querySelectorAll('.event').forEach(event => event.parentElement.innerHTML = '');
+        alert('All courses have been deleted.');
+    }
 }
 
