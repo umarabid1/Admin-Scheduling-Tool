@@ -6,8 +6,32 @@
     <title>Section Scheduling</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body class="sections-page">
+    <!-- Hamburger Navigation Menu -->
+    <div class="hamburger-menu">
+        <div class="hamburger" onclick="toggleMenu()">
+            &#9776;
+        </div>
+        <ul id="menu" class="hidden">
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="faculty.html">Faculty</a></li>
+            <li><a href="courses.html">Courses</a></li>
+            <li><a href="sections.html">Sections</a></li>
+        </ul>
+    </div>
+
+    <!-- Page Title -->
     <h2>Section Scheduling</h2>
+
+    <!-- Search Filter Input -->
+    <input 
+        type="text" 
+        id="searchSections" 
+        placeholder="Search sections by course name, faculty, or room..." 
+        oninput="filterTable('sectionTable', this.value)"
+    >
+
+    <!-- Section Scheduling Table -->
     <table id="sectionTable">
         <thead>
             <tr>
@@ -26,9 +50,39 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Rows will be dynamically added here -->
+            <!-- Sample Rows for Testing -->
+            <tr>
+                <td>Math 101</td>
+                <td>MTH101</td>
+                <td>001</td>
+                <td>John Doe</td>
+                <td>Room 203</td>
+                <td>MWF</td>
+                <td>Lecture</td>
+                <td>09:00 AM</td>
+                <td>10:00 AM</td>
+                <td>30</td>
+                <td>Notes</td>
+                <td>Edit | Delete</td>
+            </tr>
+            <tr>
+                <td>Physics 101</td>
+                <td>PHY101</td>
+                <td>002</td>
+                <td>Jane Smith</td>
+                <td>Room 304</td>
+                <td>TR</td>
+                <td>Lab</td>
+                <td>11:00 AM</td>
+                <td>12:30 PM</td>
+                <td>25</td>
+                <td>Lab Notes</td>
+                <td>Edit | Delete</td>
+            </tr>
         </tbody>
     </table>
+
+    <!-- Add/Edit Section Form -->
     <h3>Add/Edit Section</h3>
     <form id="sectionForm">
         <input type="text" id="courseName" placeholder="Course Name" required>
@@ -42,30 +96,213 @@
             <option value="LAB">Lab</option>
             <option value="REC">Recitation</option>
         </select>
-        <input type="time" id="startTime" required>
-        <input type="time" id="endTime" required>
-        <input type="number" id="anticipatedEnrollment" placeholder="Anticipated Enrollment" required>
-        <div id="customFieldsContainer"></div>
-        <button type="button" id="addFieldButton">Add Custom Field</button>
-        <button type="submit">Save</button>
-    </form>
+<label for="startTime">Start Time:</label>
+    <select id="startTime" required></select>
+    <label for="endTime">End Time:</label>
+    <select id="endTime" required></select>
+            <input type="number" id="anticipatedEnrollment" placeholder="Anticipated Enrollment" required>
+            <div id="customFieldsContainer"></div>
+            <button type="button" id="addFieldButton">Add Custom Field</button>
+            <button type="submit">Save</button>
+        </form>
 
-    <h2>Timetable</h2>
-    <button id="showTimetableButton">Show Timetable</button>
-    <div id="timetableContainer" class="hidden">
-        <div class="timetable">
-            <div class="header">
-                <div class="cell">Time</div>
-                <div class="cell">Sunday</div>
-                <div class="cell">Monday</div>
-                <div class="cell">Tuesday</div>
-                <div class="cell">Wednesday</div>
-                <div class="cell">Thursday</div>
-                <div class="cell">Friday</div>
-                <div class="cell">Saturday</div>
-            </div>
-            <div class="body">
-                <!-- Timetable rows will be generated dynamically -->
+        <div class="input-container">
+    <h3>Weekly Schedule Table</h3>
+    <input type="text" id="courseInput" placeholder="Enter Course Name/Number">
+    <select id="daySelect">
+        <option value="">Select Day</option>
+        <option value="sun">Sun</option>
+        <option value="mon">Mon</option>
+        <option value="tue">Tue</option>
+        <option value="wed">Wed</option>
+        <option value="thu">Thu</option>
+        <option value="fri">Fri</option>
+        <option value="sat">Sat</option>
+    </select>
+    <select id="startTimeSelect">
+        <option value="">Select Start Time</option>
+        <option value="8am">8am</option>
+        <option value="9am">9am</option>
+        <option value="10am">10am</option>
+        <option value="11am">11am</option>
+        <option value="12pm">12pm</option>
+        <option value="1pm">1pm</option>
+        <option value="2pm">2pm</option>
+        <option value="3pm">3pm</option>
+        <option value="4pm">4pm</option>
+        <option value="5pm">5pm</option>
+        <option value="6pm">6pm</option>
+        <option value="7pm">7pm</option>
+        <option value="8pm">8pm</option>
+    </select>
+    <select id="endTimeSelect">
+        <option value="">Select End Time</option>
+        <option value="8am">8am</option>
+        <option value="9am">9am</option>
+        <option value="10am">10am</option>
+        <option value="11am">11am</option>
+        <option value="12pm">12pm</option>
+        <option value="1pm">1pm</option>
+        <option value="2pm">2pm</option>
+        <option value="3pm">3pm</option>
+        <option value="4pm">4pm</option>
+        <option value="5pm">5pm</option>
+        <option value="6pm">6pm</option>
+        <option value="7pm">7pm</option>
+        <option value="8pm">8pm</option>
+    </select>
+    <button onclick="addCourse()">Add Course</button>
+    <button onclick="deleteAllCourses()">Delete All Courses</button>
+
+</div>
+
+<table>
+    <tr>
+        <th>Time</th>
+        <th>Sun</th>
+        <th>Mon</th>
+        <th>Tue</th>
+        <th>Wed</th>
+        <th>Thu</th>
+        <th>Fri</th>
+        <th>Sat</th>
+    </tr>
+    <tbody id="schedule">
+        <tr>
+            <td>8am</td>
+            <td id="sun-8am"></td>
+            <td id="mon-8am"></td>
+            <td id="tue-8am"></td>
+            <td id="wed-8am"></td>
+            <td id="thu-8am"></td>
+            <td id="fri-8am"></td>
+            <td id="sat-8am"></td>
+        </tr>
+        <tr>
+            <td>9am</td>
+            <td id="sun-9am"></td>
+            <td id="mon-9am"></td>
+            <td id="tue-9am"></td>
+            <td id="wed-9am"></td>
+            <td id="thu-9am"></td>
+            <td id="fri-9am"></td>
+            <td id="sat-9am"></td>
+        </tr>
+        <tr>
+            <td>10am</td>
+            <td id="sun-10am"></td>
+            <td id="mon-10am"></td>
+            <td id="tue-10am"></td>
+            <td id="wed-10am"></td>
+            <td id="thu-10am"></td>
+            <td id="fri-10am"></td>
+            <td id="sat-10am"></td>
+        </tr>
+        <tr>
+            <td>11am</td>
+            <td id="sun-11am"></td>
+            <td id="mon-11am"></td>
+            <td id="tue-11am"></td>
+            <td id="wed-11am"></td>
+            <td id="thu-11am"></td>
+            <td id="fri-11am"></td>
+            <td id="sat-11am"></td>
+        </tr>
+        <tr>
+            <td>12pm</td>
+            <td id="sun-12pm"></td>
+            <td id="mon-12pm"></td>
+            <td id="tue-12pm"></td>
+            <td id="wed-12pm"></td>
+            <td id="thu-12pm"></td>
+            <td id="fri-12pm"></td>
+            <td id="sat-12pm"></td>
+        </tr>
+        <tr>
+            <td>1pm</td>
+            <td id="sun-1pm"></td>
+            <td id="mon-1pm"></td>
+            <td id="tue-1pm"></td>
+            <td id="wed-1pm"></td>
+            <td id="thu-1pm"></td>
+            <td id="fri-1pm"></td>
+            <td id="sat-1pm"></td>
+        </tr>
+        <tr>
+            <td>2pm</td>
+            <td id="sun-2pm"></td>
+            <td id="mon-2pm"></td>
+            <td id="tue-2pm"></td>
+            <td id="wed-2pm"></td>
+            <td id="thu-2pm"></td>
+            <td id="fri-2pm"></td>
+            <td id="sat-2pm"></td>
+        </tr>
+        <tr>
+            <td>3pm</td>
+            <td id="sun-3pm"></td>
+            <td id="mon-3pm"></td>
+            <td id="tue-3pm"></td>
+            <td id="wed-3pm"></td>
+            <td id="thu-3pm"></td>
+            <td id="fri-3pm"></td>
+            <td id="sat-3pm"></td>
+        </tr>
+        <tr>
+            <td>4pm</td>
+            <td id="sun-4pm"></td>
+            <td id="mon-4pm"></td>
+            <td id="tue-4pm"></td>
+            <td id="wed-4pm"></td>
+            <td id="thu-4pm"></td>
+            <td id="fri-4pm"></td>
+            <td id="sat-4pm"></td>
+        </tr>
+        <tr>
+            <td>5pm</td>
+            <td id="sun-5pm"></td>
+            <td id="mon-5pm"></td>
+            <td id="tue-5pm"></td>
+            <td id="wed-5pm"></td>
+            <td id="thu-5pm"></td>
+            <td id="fri-5pm"></td>
+            <td id="sat-5pm"></td>
+        </tr>
+        <tr>
+            <td>6pm</td>
+            <td id="sun-6pm"></td>
+            <td id="mon-6pm"></td>
+            <td id="tue-6pm"></td>
+            <td id="wed-6pm"></td>
+            <td id="thu-6pm"></td>
+            <td id="fri-6pm"></td>
+            <td id="sat-6pm"></td>
+        </tr>
+        <tr>
+            <td>7pm</td>
+            <td id="sun-7pm"></td>
+            <td id="mon-7pm"></td>
+            <td id="tue-7pm"></td>
+            <td id="wed-7pm"></td>
+            <td id="thu-7pm"></td>
+            <td id="fri-7pm"></td>
+            <td id="sat-7pm"></td>
+        </tr>
+        <tr>
+            <td>8pm</td>
+            <td id="sun-8pm"></td>
+            <td id="mon-8pm"></td>
+            <td id="tue-8pm"></td>
+            <td id="wed-8pm"></td>
+            <td id="thu-8pm"></td>
+            <td id="fri-8pm"></td>
+            <td id="sat-8pm"></td>
+        </tr>
+    </tbody>
+</table>
+                <div class="body">
+                    <!-- Timetable rows will be dynamically generated -->
+                </div>
             </div>
         </div>
     </div>
