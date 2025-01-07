@@ -1,4 +1,5 @@
-# Cyber-Zamurai
+# Admin Scheduling Tool
+
 
 ## Project Overview
 Cyber-Zamurai is a system designed to simplify academic scheduling by automating the allocation of teaching resources and centralizing course-related data. It enables administrators to manage a comprehensive database of faculty members and course offerings. The system streamlines the creation and modification of course sections, assigning qualified faculty based on their availability and expertise.
