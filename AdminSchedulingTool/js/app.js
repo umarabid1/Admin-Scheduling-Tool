@@ -300,34 +300,34 @@ function addCourse() {
         return;
     }
 
-    // Check if time slot is occupied
+    // Allow adding multiple courses to the same slot
     for (let i = startIndex; i < endIndex; i++) {
         const cellId = `${day}-${["8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm"][i]}`;
         const cell = document.getElementById(cellId);
-        if (cell && cell.innerHTML) {
-            alert('This time slot is already occupied!');
-            return;
+
+        if (cell) {
+            // Add the new course to the cell content
+            const courseDiv = document.createElement('div');
+            courseDiv.classList.add('event');
+            courseDiv.textContent = courseNumber;
+
+            // Optional: Add a delete button for each event
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.style.marginLeft = '10px';
+            deleteButton.onclick = () => {
+                courseDiv.remove(); // Remove the specific course
+            };
+
+            courseDiv.appendChild(deleteButton);
+            cell.appendChild(courseDiv);
         }
     }
 
-    // Save to localStorage
+    // Optionally, save the updated schedule to local storage
     const courses = loadFromLocalStorage('timetableCourses');
     courses.push({ courseNumber, day, startTime, endTime });
     saveToLocalStorage('timetableCourses', courses);
-
-    // Update timetable visually
-    for (let i = startIndex; i < endIndex; i++) {
-        const cellId = `${day}-${["8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm"][i]}`;
-        const cell = document.getElementById(cellId);
-        if (cell) {
-            cell.innerHTML = `
-                <div class="event">
-                    ${courseNumber}
-                    <button onclick="deleteCourse('${day}', '${startTime}', '${endTime}', '${courseNumber}')">Delete</button>
-                </div>
-            `;
-        }
-    }
 
     // Clear input fields
     document.getElementById('courseInput').value = '';

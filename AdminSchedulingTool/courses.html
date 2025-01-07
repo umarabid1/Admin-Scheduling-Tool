@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Management</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- Hamburger Navigation Menu -->
@@ -20,7 +21,7 @@
         </ul>
     </div>
 
-    <h2>Course Management</h2>
+    <h2 class="text-2xl font-bold text-gray-800">Course Management</h2>
     <input type="text" id="searchCourses" placeholder="Search..." oninput="filterTable('courseTable', this.value)">
     <table id="courseTable">
         <thead>
