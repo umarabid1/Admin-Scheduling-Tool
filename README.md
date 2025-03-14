@@ -13,7 +13,10 @@ Cyber-Zamurai is a system designed to simplify academic scheduling by automating
 - **Validation and Error Handling**: Ensure accurate data entry and dynamic updates.
 - **Centralized Management**: View and manage faculty, courses, and schedules from a single interface.
 
-
+## Tech Stack
+- **Frontend:** React.js, HTML, CSS
+- **Backend:** Node.js (Express.js)
+- **Data Persistence:** LocalStorage (real-time database to be added later)
 
 ## Tasks
 
@@ -30,87 +33,49 @@ Cyber-Zamurai is a system designed to simplify academic scheduling by automating
 - Store and display assigned courses in a schedule list.
 
 
-### Steps to Run
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/umarabid1/Admin-Scheduling-Tool.git
-   cd Admin-Scheduling-Tool
-   ```
+## How to Run the Project
 
-2. **Install Dependencies**
-   - Navigate to the backend directory:
-     ```bash
-     cd backend
-     ```
-   - Install required dependencies:
-     ```bash
-     npm install
-     ```
+### **1. Clone the Repository**
+```bash
+git clone https://github.com/umarabid1/Admin-Scheduling-Tool.git
+cd Admin-Scheduling-Tool
+```
 
-3. **Start the Backend Server**
-   ```bash
-   npm start
-   ```
-   The backend should now be running at `http://localhost:5000`.
+### **2. Install Dependencies**
+Navigate to the backend folder and install required dependencies:
+```bash
+cd backend
+npm install
+```
 
-4. **Run the Frontend**
-   - Open `index.html` in a browser or use **Live Server** in VS Code.
+### **3. Start the Backend Server**
+```bash
+npm start
+```
+The backend should now be running at `http://localhost:5000`.
+
+### **4. Run the Frontend**
+Open the **index.html** file in a browser or use **Live Server** in VS Code to serve the frontend.
 
 ---
 
-## Testing API Endpoints
-Once the backend is running, use **Postman** or **cURL** to test the API.
+## How the System Works
 
-### **Faculty API**
-- **Get all faculty members**
-  ```http
-  GET http://localhost:5000/api/faculty
-  ```
-- **Add a new faculty member**
-  ```http
-  POST http://localhost:5000/api/faculty
-  Content-Type: application/json
+### **Faculty Management**
+- Administrators can add faculty members with **name, department, and availability**.
+- Data is stored locally in **LocalStorage**, ensuring it persists between sessions.
 
-  {
-    "name": "John Doe",
-    "email": "johndoe@example.com",
-    "department": "Computer Science"
-  }
-  ```
-- **Update a faculty member**
-  ```http
-  PUT http://localhost:5000/api/faculty/{faculty_id}
-  ```
-- **Delete a faculty member**
-  ```http
-  DELETE http://localhost:5000/api/faculty/{faculty_id}
-  ```
+### **Course Management**
+- Courses can be added with **course code, title, and credit hours**.
+- Course assignments update in real-time without the need for a backend database.
 
-### **Course API**
-- **Get all courses**
-  ```http
-  GET http://localhost:5000/api/courses
-  ```
-- **Add a new course**
-  ```http
-  POST http://localhost:5000/api/courses
-  Content-Type: application/json
-
-  {
-    "code": "CS101",
-    "name": "Introduction to Programming",
-    "credits": 3
-  }
-  ```
-- **Update a course**
-  ```http
-  PUT http://localhost:5000/api/courses/{course_id}
-  ```
-- **Delete a course**
-  ```http
-  DELETE http://localhost:5000/api/courses/{course_id}
-  ```
+### **Scheduling Automation**
+- Faculty members are dynamically assigned to courses based on availability.
+- The system ensures **conflict-free scheduling**, preventing faculty from being assigned to overlapping shifts.
 
 ---
-
-
+## Future Improvements
+- **Integration with a Database:** Shift from LocalStorage to a real-time database (e.g., Firebase or MongoDB).
+- **Authentication System:** Implement user login functionality for restricted access.
+- **Export & Import Data:** Allow users to save and load schedules for backup purposes.
+- **Advanced Filtering:** Add filtering based on faculty availability, department, and workload.
