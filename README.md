@@ -13,29 +13,7 @@ Cyber-Zamurai is a system designed to simplify academic scheduling by automating
 - **Validation and Error Handling**: Ensure accurate data entry and dynamic updates.
 - **Centralized Management**: View and manage faculty, courses, and schedules from a single interface.
 
----
 
-## User Stories
-
-### Faculty Management
-**As an administrator,** I want to add faculty members to manage course assignments.
-- **Acceptance Criteria**:
-  - The system allows input of faculty names.
-  - Faculty names are displayed in a list.
-
-### Course Management
-**As an administrator,** I want to add course offerings to manage what is available for scheduling.
-- **Acceptance Criteria**:
-  - The system allows input of course names.
-  - Course names are displayed in a list.
-
-### Scheduling Automation
-**As an administrator,** I want to assign courses to faculty members to automate scheduling.
-- **Acceptance Criteria**:
-  - The system allows selection of faculty and courses.
-  - Assigned courses are displayed in a schedule list.
-
----
 
 ## Tasks
 
@@ -51,17 +29,88 @@ Cyber-Zamurai is a system designed to simplify academic scheduling by automating
 - Allow assignment of courses to selected faculty.
 - Store and display assigned courses in a schedule list.
 
+
+### Steps to Run
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/umarabid1/Admin-Scheduling-Tool.git
+   cd Admin-Scheduling-Tool
+   ```
+
+2. **Install Dependencies**
+   - Navigate to the backend directory:
+     ```bash
+     cd backend
+     ```
+   - Install required dependencies:
+     ```bash
+     npm install
+     ```
+
+3. **Start the Backend Server**
+   ```bash
+   npm start
+   ```
+   The backend should now be running at `http://localhost:5000`.
+
+4. **Run the Frontend**
+   - Open `index.html` in a browser or use **Live Server** in VS Code.
+
 ---
 
-## Bugs
-- **Input Validation Issues**: Ensure that empty faculty or course names cannot be submitted.
-- **Dropdown Functionality**: Ensure that new entries appear dynamically in the dropdown menus.
+## Testing API Endpoints
+Once the backend is running, use **Postman** or **cURL** to test the API.
+
+### **Faculty API**
+- **Get all faculty members**
+  ```http
+  GET http://localhost:5000/api/faculty
+  ```
+- **Add a new faculty member**
+  ```http
+  POST http://localhost:5000/api/faculty
+  Content-Type: application/json
+
+  {
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "department": "Computer Science"
+  }
+  ```
+- **Update a faculty member**
+  ```http
+  PUT http://localhost:5000/api/faculty/{faculty_id}
+  ```
+- **Delete a faculty member**
+  ```http
+  DELETE http://localhost:5000/api/faculty/{faculty_id}
+  ```
+
+### **Course API**
+- **Get all courses**
+  ```http
+  GET http://localhost:5000/api/courses
+  ```
+- **Add a new course**
+  ```http
+  POST http://localhost:5000/api/courses
+  Content-Type: application/json
+
+  {
+    "code": "CS101",
+    "name": "Introduction to Programming",
+    "credits": 3
+  }
+  ```
+- **Update a course**
+  ```http
+  PUT http://localhost:5000/api/courses/{course_id}
+  ```
+- **Delete a course**
+  ```http
+  DELETE http://localhost:5000/api/courses/{course_id}
+  ```
 
 ---
-
-## Technical Debt
-- **Refactor UI Code**: Improve code organization by separating logic into different classes or modules.
-- **Add Unit Tests**: Create tests for core functionalities to ensure reliability during future changes.
-
 
 
